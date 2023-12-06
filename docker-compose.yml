@@ -1,0 +1,15 @@
+version: '3.7'
+
+services:
+  connector:
+    build:
+      dockerfile: Dockerfile
+    volumes:
+      - '.:/usr/src/app'
+    environment:
+      MIRAKL_API_URL: ${MIRAKL_API_URL}
+      MIRAKL_API_TOKEN: ${MIRAKL_API_TOKEN}
+      MIRAKL_ORDER_STATUS: ${MIRAKL_ORDER_STATUS}
+    stdin_open: true
+    tty: true
+    working_dir: /usr/src/app
