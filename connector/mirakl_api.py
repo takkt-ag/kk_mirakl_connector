@@ -79,6 +79,6 @@ class MiraklApi:
                                   params={"order_state_codes": order_state_codes})
 
         if all_orders.status_code != 200:
-            raise Exception(f"Error while getting orders: {all_orders.text}")
+            raise Exception(f"Error while getting orders")
 
         return all_orders.json()
