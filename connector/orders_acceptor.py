@@ -6,11 +6,11 @@ from .mirakl_api import MiraklApi
 
 container_api = ContainerApi()
 
-mirakle_api_token: str = os.getenv("MIRAKL_API_TOKEN")
-mirakle_api_url: str = os.getenv("MIRAKL_API_URL")
-mirakle_order_status = os.getenv("MIRAKL_ORDER_STATUS")
+mirakl_api_token: str = os.getenv("MIRAKL_API_TOKEN")
+mirakl_api_url: str = os.getenv("MIRAKL_API_URL")
+mirakl_order_status = os.getenv("MIRAKL_ORDER_STATUS")
 
-mirakle_api: MiraklApi = MiraklApi(mirakle_api_token, mirakle_api_url)
+mirakl_api: MiraklApi = MiraklApi(mirakl_api_token, mirakl_api_url)
 
 
 def accept_mirakl_orders():
@@ -24,7 +24,7 @@ def accept_mirakl_orders():
         ContainerApiError: if no order lines
     """
     try:
-        result = mirakle_api.accept_orders(order_state_codes=mirakle_order_status)
+        result = mirakl_api.accept_orders(order_state_codes=mirakl_order_status)
         print(f"Accepted order lines: {result}")
         container_api.log(LogLevel.SUCCESS, f"Accepted orders: {result}")
     except ContainerApiError as error:

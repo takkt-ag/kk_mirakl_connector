@@ -33,7 +33,6 @@ def test_accept_orders_no_order_lines(api_client):
         assert "no order lines" in str(exception_info.value)
 
 
-# Test for accept_order_line
 def test_accept_order_line_failure(api_client):
     order_id = "123"
     order_line_id = "456"
