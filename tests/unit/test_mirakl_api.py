@@ -22,7 +22,7 @@ def test_accept_orders_no_orders(api_client):
     with requests_mock.Mocker() as m:
         m.get("http://testurl.com/api/orders", json={"orders": []}, status_code=200)
         accepted_orders = api_client.accept_orders("test_state")
-        assert accepted_orders == []
+        assert accepted_orders is None
 
 
 def test_accept_orders_no_order_lines(api_client):
@@ -40,7 +40,7 @@ def test_accept_order_line_failure(api_client):
     with requests_mock.Mocker() as m:
         m.put(f"http://testurl.com/api/orders/{order_id}/accept", status_code=400)
         with pytest.raises(Exception) as exception_info:
-            api_client.accept_order_line(order_id, order_line_id)
+            api_client.accept_order_lines(order_id, order_line_id)
         assert "Error while accepting order" in str(exception_info.value)
 
 

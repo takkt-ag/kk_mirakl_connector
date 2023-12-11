@@ -1,4 +1,5 @@
 import requests
+from typing import Optional
 
 
 class MiraklApi:
@@ -9,20 +10,21 @@ class MiraklApi:
         self.auth_token = auth_token
         self.url = url
 
-    def accept_orders(self, order_state_codes: str) -> list:
+    def accept_orders(self, order_state_codes: str) -> Optional[list]:
         """
         Accept all orders with given state
 
         Args:
             order_state_codes:
         Returns:
-            None
+            list: all order lines that were accepted
+            None: if no order lines
         Raises:
             Exception: if status code is not 204
             Exception: if no order lines
         """
         all_orders = self.get_order_by_state(order_state_codes)
-        accepted_orders_lines: list = []
+        orders_lines_to_accept: list = []
 
         for order in all_orders.get("orders"):
             order_id: str = order.get("order_id")
@@ -31,31 +33,34 @@ class MiraklApi:
             if order_lines:
                 for order_line in order_lines:
                     order_line_id: str = order_line.get("order_line_id")
-                    is_order_accepted: bool = self.accept_order_line(order_id, order_line_id)
-
-                    if is_order_accepted:
-                        accepted_orders_lines.append(order_line_id)
-                        print(f"Order line {order_line_id} accepted")
+                    orders_lines_to_accept.append(order_line_id)
             else:
                 raise Exception(f"Error while accepting order {order_id}: no order lines")
 
-        return accepted_orders_lines
+        if orders_lines_to_accept:
+            is_order_accepted: bool = self.accept_order_lines(order_id, orders_lines_to_accept)
 
-    def accept_order_line(self, order_id: str, order_line_id: str) -> bool:
+            if is_order_accepted:
+                print(f"Accepted order lines: {orders_lines_to_accept}")
+                return orders_lines_to_accept
+
+    def accept_order_lines(self, order_id: str, order_line_ids: list) -> bool:
         """
         Accept order line
         Args:
             order_id:
-            order_line_id:
+            order_line_ids:
 
         Returns:
             True if order line was accepted
         Raises:
             Exception: if status code is not 204
         """
+        lines_to_accept: list = [{"accepted": True, "id": order_line_id} for order_line_id in order_line_ids]
+        json_to_accept: dict = {"order_lines": lines_to_accept}
         accept_order_response = requests.put(f"{self.url}{self.ACCEPT_ORDER_URL.format(order_id=order_id)}",
                                              headers={"Authorization": self.auth_token},
-                                             json={"order_lines": [{"accepted": True, "id": order_line_id}]})
+                                             json=json_to_accept)
 
         if accept_order_response.status_code != 204:
             raise Exception(f"Error while accepting order {order_id}: {accept_order_response.text}")

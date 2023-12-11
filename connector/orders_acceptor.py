@@ -25,8 +25,9 @@ def accept_mirakl_orders():
     """
     try:
         result = mirakl_api.accept_orders(order_state_codes=mirakl_order_status)
-        print(f"Accepted order lines: {result}")
-        container_api.log(LogLevel.SUCCESS, f"Accepted orders: {result}")
+        if result:
+            print(f"Accepted order lines: {result}")
+            container_api.log(LogLevel.SUCCESS, f"Accepted orders: {result}")
     except ContainerApiError as error:
-        container_api.log(LogLevel.ERROR, error.message)
         print(error.message, file=sys.stderr)
+        container_api.log(LogLevel.ERROR, error.message)
