@@ -15,14 +15,14 @@ def test_accept_orders_success(api_client):
               json={"orders": [{"order_id": "1", "order_lines": [{"order_line_id": "10"}]}]}, status_code=200)
         m.put("http://testurl.com/api/orders/1/accept", status_code=204)
         accepted_orders = api_client.accept_orders("test_state")
-        assert "10" in accepted_orders
+        assert "1" in accepted_orders
 
 
 def test_accept_orders_no_orders(api_client):
     with requests_mock.Mocker() as m:
         m.get("http://testurl.com/api/orders", json={"orders": []}, status_code=200)
         accepted_orders = api_client.accept_orders("test_state")
-        assert accepted_orders is None
+        assert accepted_orders == []
 
 
 def test_accept_orders_no_order_lines(api_client):

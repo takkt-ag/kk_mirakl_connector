@@ -24,9 +24,10 @@ class MiraklApi:
             Exception: if no order lines
         """
         all_orders = self.get_order_by_state(order_state_codes)
-        orders_lines_to_accept: list = []
+        accepted_orders: list = []
 
         for order in all_orders.get("orders"):
+            orders_lines_to_accept: list = []
             order_id: str = order.get("order_id")
             order_lines: list = order.get("order_lines")
 
@@ -37,12 +38,13 @@ class MiraklApi:
             else:
                 raise Exception(f"Error while accepting order {order_id}: no order lines")
 
-        if orders_lines_to_accept:
-            is_order_accepted: bool = self.accept_order_lines(order_id, orders_lines_to_accept)
+            if orders_lines_to_accept:
+                is_order_accepted: bool = self.accept_order_lines(order_id, orders_lines_to_accept)
 
-            if is_order_accepted:
-                print(f"Accepted order lines: {orders_lines_to_accept}")
-                return orders_lines_to_accept
+                if is_order_accepted:
+                    accepted_orders.append(order_id)
+
+        return accepted_orders
 
     def accept_order_lines(self, order_id: str, order_line_ids: list) -> bool:
         """
